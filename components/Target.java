@@ -8,17 +8,18 @@ import utils.Constants;
 
 public class Target {
     private final int lane;
+    private final int x, y;
     private int animateSuccessTime = 0, animatePressTime = 0;
     private boolean isHeld = false;
-    private final AssetImage targetImage = new AssetImage("assets/target.png");
 
-    public Target(int lane) {
+    public Target(int lane, int x, int y) {
         this.lane = lane;
+        this.x = x;
+        this.y = y;
     }
 
     public void draw(Graphics g) {
-        g.drawImage(targetImage.getImage(), 100 + lane * 100 - 20, Constants.SCREEN_HEIGHT - 100, 90, 60, null);
-        g.setColor(Color.BLUE);
+        g.setColor(Color.decode("#8451C9"));
         if (animateSuccessTime > 0 || animatePressTime > 0 || isHeld) {
             if (animatePressTime > 0 || isHeld) {
                 g.setColor(Color.YELLOW);
@@ -26,8 +27,8 @@ public class Target {
             if (animateSuccessTime > 0) {
                 g.setColor(Color.GREEN);
             }
-            g.fillOval(100 + lane * 100 - 20, Constants.SCREEN_HEIGHT - 100, 90, 40);
         }
+        g.fillOval(x-30, y-30, 60, 60);
     }
 
     public void update() {

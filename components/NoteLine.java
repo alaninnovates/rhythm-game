@@ -16,9 +16,11 @@ public class NoteLine {
         int currentX = startX + (endX - startX) * noteTravelPercent / 100;
         int currentY = startY + (endY - startY) * noteTravelPercent / 100;
         g.setColor(Color.WHITE);
-        g.drawLine(startX, startY, endX, endY);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(5));
+        g2d.drawLine(startX, startY, endX, endY);
         if (noteTravelPercent >= 0) {
-            g.drawOval(currentX, currentY, 20, 20);
+            g.fillOval(currentX - 30, currentY - 30, 60, 60);
         }
     }
 }

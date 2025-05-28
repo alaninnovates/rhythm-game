@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 import views.GameView;
 
 public class KeyboardListener implements KeyListener {
-    private GameView gameView;
+    private final GameView gameView;
 
     public KeyboardListener(GameView gameView) {
         this.gameView = gameView;
