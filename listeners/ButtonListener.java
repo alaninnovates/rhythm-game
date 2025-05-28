@@ -1,18 +1,18 @@
 package listeners;
 
 import components.Button;
-import views.HomeView;
+import views.View;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class ButtonListener implements MouseMotionListener, MouseListener {
-    private final HomeView homeView;
+    private final View view;
     private final Button[] buttons;
 
-    public ButtonListener(HomeView homeView, Button[] buttons) {
-        this.homeView = homeView;
+    public ButtonListener(View homeView, Button[] buttons) {
+        this.view = homeView;
         this.buttons = buttons;
 
         homeView.addMouseMotionListener(this);
@@ -32,10 +32,10 @@ public class ButtonListener implements MouseMotionListener, MouseListener {
         for (Button button : buttons) {
             if (button.contains(x, y)) {
                 button.setHovered(true);
-                homeView.repaint();
+                view.repaint();
             } else {
                 button.setHovered(false);
-                homeView.repaint();
+                view.repaint();
             }
         }
     }
@@ -47,7 +47,7 @@ public class ButtonListener implements MouseMotionListener, MouseListener {
         for (Button button : buttons) {
             if (button.contains(x, y)) {
                 button.onClick();
-                homeView.repaint();
+                view.repaint();
                 break;
             }
         }

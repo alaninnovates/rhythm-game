@@ -69,6 +69,10 @@ public class GameView extends View {
             target.update();
         }
         percentCompleted = Math.min(100, percentCompleted + 1);
+        if (percentCompleted == 100) {
+            stateManager.setScore(1000);
+            game.showEndView();
+        }
     }
 
     public void triggerLane(int lane) {

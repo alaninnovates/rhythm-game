@@ -27,6 +27,10 @@ public class StateManager {
         this.score += increment;
     }
 
+    public void retry() {
+        this.score = 0;
+    }
+
     public void reset() {
         this.chosenSong = null;
         this.score = 0;

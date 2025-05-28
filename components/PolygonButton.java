@@ -9,7 +9,7 @@ public class PolygonButton implements Button {
 
     private boolean hovered;
 
-    public PolygonButton(int[] xPoints, int[]yPoints, Color color, Color hoverColor, Runnable onClickAction) {
+    public PolygonButton(int[] xPoints, int[] yPoints, Color color, Color hoverColor, Runnable onClickAction) {
         this.color = color;
         this.hoverColor = hoverColor;
         this.onClickAction = onClickAction;
