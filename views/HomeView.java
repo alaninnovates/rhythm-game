@@ -9,6 +9,7 @@ import data.SongFileProcessor;
 import data.Songs;
 import lib.StateManager;
 import listeners.ButtonListener;
+import utils.Utils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -58,7 +59,8 @@ public class HomeView extends View {
                         currentSong = songs.get(currentIndex - 1);
                         repaint();
                     }
-                }
+                },
+                () -> currentSong != null && songs.indexOf(currentSong) > 0
         );
         nextButton = new PolygonButton(
                 new int[]{275, 301, 250},
@@ -71,7 +73,8 @@ public class HomeView extends View {
                         currentSong = songs.get(currentIndex + 1);
                         repaint();
                     }
-                }
+                },
+                () -> currentSong != null && songs.indexOf(currentSong) < songs.size() - 1
         );
         new ButtonListener(this, new Button[]{playButton, bookmarkButton, previousButton, nextButton});
 
@@ -108,8 +111,7 @@ public class HomeView extends View {
         g.setColor(difficultyColors.get(currentSong.difficulty()));
         g.fillRoundRect(109, 263, 82, 22, 10, 10);
         g.setColor(Color.WHITE);
-        int len = g.getFontMetrics().stringWidth(currentSong.difficulty().toString());
-        g.drawString(currentSong.difficulty().toString(), 109 + (82 - len) / 2, 280);
+        g.drawString(currentSong.difficulty().toString(), 109 + (82 - Utils.getTextLength(g, currentSong.difficulty().toString())) / 2, 280);
 
         g.drawString("BPM: " + currentSong.bpm(), 110, 310);
     }
