@@ -1,6 +1,6 @@
 package listeners;
 
-import components.Button;
+import components.buttons.Button;
 import views.View;
 
 import java.awt.event.MouseEvent;

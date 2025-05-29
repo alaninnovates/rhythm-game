@@ -1,4 +1,4 @@
-package components;
+package components.buttons;
 
 import java.awt.*;
 import java.util.function.BooleanSupplier;

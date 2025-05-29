@@ -1,7 +1,7 @@
 package views;
 
-import components.Button;
-import components.RectangleButton;
+import components.buttons.Button;
+import components.buttons.RectangleButton;
 import lib.AssetImage;
 import lib.StateManager;
 import listeners.ButtonListener;

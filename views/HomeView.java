@@ -1,8 +1,8 @@
 package views;
 
-import components.Button;
-import components.CircularButton;
-import components.PolygonButton;
+import components.buttons.Button;
+import components.buttons.CircularButton;
+import components.buttons.PolygonButton;
 import data.Difficulty;
 import data.Song;
 import data.SongFileProcessor;
