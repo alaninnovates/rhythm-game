@@ -3,10 +3,7 @@ package views;
 import components.buttons.Button;
 import components.buttons.CircularButton;
 import components.buttons.PolygonButton;
-import data.Difficulty;
-import data.Song;
-import data.SongFileProcessor;
-import data.Songs;
+import data.*;
 import lib.StateManager;
 import listeners.ButtonListener;
 import utils.Utils;
@@ -18,21 +15,21 @@ import java.util.HashMap;
 public class HomeView extends View {
     private final CircularButton playButton, bookmarkButton;
     private final PolygonButton previousButton, nextButton;
-    private final ArrayList<Song> songs = new ArrayList<>();
+    private final ArrayList<SongMetadata> songs = new ArrayList<>();
     private final HashMap<String, String> songFileMap = new HashMap<>();
     private final HashMap<Difficulty, Color> difficultyColors = new HashMap<>() {{
         put(Difficulty.Easy, Color.decode("#6FFFA0"));
         put(Difficulty.Medium, Color.decode("#FFB86F"));
         put(Difficulty.Hard, Color.decode("#FF6F6F"));
     }};
-    private Song currentSong;
+    private SongMetadata currentSong;
 
     public HomeView(Game game, StateManager stateManager) {
         super(game, stateManager);
         setLayout(new BorderLayout());
 
         for (String song : Songs.getAllSongFiles()) {
-            Song s = SongFileProcessor.processSong("songs/" + song);
+            SongMetadata s = SongFileProcessor.getMetadata("songs/" + song);
             songs.add(s);
             songFileMap.put(s.name(), song);
         }

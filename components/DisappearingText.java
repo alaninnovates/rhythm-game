@@ -1,11 +1,12 @@
 package components;
 
-import java.awt.Graphics;
+import utils.Utils;
+
+import java.awt.*;
 
 public class DisappearingText {
-    private String text;
-    private int x;
-    private int y;
+    private final String text;
+    private final int x, y;
     private int disappearTime;
 
     public DisappearingText(String text, int x, int y, int disappearTime) {
@@ -21,7 +22,9 @@ public class DisappearingText {
 
     public void draw(Graphics g) {
         if (disappearTime > 0) {
-            g.drawString(text, x, y);
+            g.setFont(new Font("Open Sans", Font.PLAIN, 20));
+            g.setColor(Color.WHITE);
+            g.drawString(text, x - Utils.getTextLength(g, text) / 2, y);
             disappearTime--;
         }
     }

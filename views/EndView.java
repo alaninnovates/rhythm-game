@@ -22,7 +22,7 @@ public class EndView extends View {
         });
         homeButton = new RectangleButton(106, 435, 152, 51, Color.decode("#A07ECE"),
                 Color.decode("#D1C0E6"), () -> {
-            stateManager.setChosenSong(null);
+            stateManager.retry();
             game.showHomeView();
         });
         new ButtonListener(this, new Button[]{homeButton, playAgainButton});
@@ -54,9 +54,9 @@ public class EndView extends View {
 
         g.setFont(new Font("Open Sans", Font.BOLD, 20));
         g.setColor(Color.WHITE);
-        g.drawString("1800", Utils.computeColumnX(g, 59, 0, space, "1800"), 225);
-        g.drawString("20", Utils.computeColumnX(g, 59, 1, space, "20"), 225);
-        g.drawString("F", Utils.computeColumnX(g, 59, 2, space, "F"), 225);
+        g.drawString(String.valueOf(stateManager.getScore()), Utils.computeColumnX(g, 59, 0, space, "1800"), 225);
+        g.drawString(String.valueOf(stateManager.getMaxCombo()), Utils.computeColumnX(g, 59, 1, space, "20"), 225);
+        g.drawString(getGrade(), Utils.computeColumnX(g, 59, 2, space, "F"), 225);
 
         space = (double) 431 / 2;
         // todo: calculate exactly
@@ -72,11 +72,35 @@ public class EndView extends View {
         g.drawString("Miss", centerAxis - Utils.getTextLength(g, "Miss") - gap / 2, 360);
 
         g.setColor(Color.WHITE);
-        g.drawString("100", centerAxis + gap / 2, 270);
-        g.drawString("50", centerAxis + gap / 2, 300);
-        g.drawString("20", centerAxis + gap / 2, 330);
-        g.drawString("0", centerAxis + gap / 2, 360);
+        g.drawString(String.valueOf(stateManager.getAccuracyCount("Perfect")), centerAxis + gap / 2, 270);
+        g.drawString(String.valueOf(stateManager.getAccuracyCount("Great")), centerAxis + gap / 2, 300);
+        g.drawString(String.valueOf(stateManager.getAccuracyCount("Okay")), centerAxis + gap / 2, 330);
+        g.drawString(String.valueOf(stateManager.getAccuracyCount("Miss")), centerAxis + gap / 2, 360);
 
         g.drawImage(djDisk.getImage(), (int) (59 + space * 1.5) - 108 / 2, 250, 108, 108, null);
+    }
+
+    private String getGrade() {
+        int perfectCount = stateManager.getAccuracyCount("Perfect");
+        int greatCount = stateManager.getAccuracyCount("Great");
+        int okayCount = stateManager.getAccuracyCount("Okay");
+        int totalCount = perfectCount + greatCount + okayCount + stateManager.getAccuracyCount("Miss");
+        if (totalCount == 0) {
+            return "F";
+        }
+        double accuracy = (double) (perfectCount * 2 + greatCount + okayCount) / totalCount;
+        if (accuracy >= 0.9) {
+            return "S";
+        } else if (accuracy >= 0.8) {
+            return "A";
+        } else if (accuracy >= 0.7) {
+            return "B";
+        } else if (accuracy >= 0.6) {
+            return "C";
+        } else if (accuracy >= 0.5) {
+            return "D";
+        } else {
+            return "F";
+        }
     }
 }

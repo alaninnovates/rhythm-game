@@ -1,26 +1,27 @@
 package components;
 
+import data.Coordinate;
+
 import java.awt.*;
 
 public class NoteLine {
-    private final int startX, startY, endX, endY;
+    private final Coordinate start, end;
 
-    public NoteLine(int startX, int startY, int endX, int endY) {
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
+    public NoteLine(Coordinate start, Coordinate end) {
+        this.start = start;
+        this.end = end;
     }
 
-    public void draw(Graphics g, int noteTravelPercent) {
-        int currentX = startX + (endX - startX) * noteTravelPercent / 100;
-        int currentY = startY + (endY - startY) * noteTravelPercent / 100;
+    public void draw(Graphics g) {
         g.setColor(Color.WHITE);
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(5));
-        g2d.drawLine(startX, startY, endX, endY);
-        if (noteTravelPercent >= 0) {
-            g.fillOval(currentX - 30, currentY - 30, 60, 60);
-        }
+        g2d.drawLine(start.x(), start.y(), end.x(), end.y());
+    }
+
+    public Coordinate computeNotePosition(double noteTravelPercent) {
+        int currentX = (int) (start.x() + (end.x() - start.x()) * noteTravelPercent / 100);
+        int currentY = (int) (start.y() + (end.y() - start.y()) * noteTravelPercent / 100);
+        return new Coordinate(currentX, currentY);
     }
 }
