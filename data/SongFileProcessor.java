@@ -71,7 +71,7 @@ public class SongFileProcessor {
         int lane = Integer.parseInt(parts[0]);
         NoteType type = switch (Integer.parseInt(parts[1])) {
             case 0 -> NoteType.Note;
-            case 1 -> NoteType.HoldNote;
+//            case 1 -> NoteType.HoldNote;
             default -> throw new IllegalArgumentException("Invalid note type: " + parts[1]);
         };
         int startTime = Integer.parseInt(parts[2]);

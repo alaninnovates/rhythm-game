@@ -48,7 +48,7 @@ public class StateManager {
         return maxCombo;
     }
 
-    private void incrementCurrentCombo() {
+    public void incrementCurrentCombo() {
         currentCombo++;
         if (currentCombo > maxCombo) {
             maxCombo = currentCombo;

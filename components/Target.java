@@ -5,6 +5,7 @@ import java.awt.Graphics;
 
 import lib.AssetImage;
 import utils.Constants;
+import utils.Utils;
 
 public class Target {
     private final int lane;
@@ -32,6 +33,9 @@ public class Target {
             }
         }
         g.fillOval(x - 30, y - 30, 60, 60);
+        g.setColor(Color.WHITE);
+        String laneKey = getLaneKey();
+        g.drawString(laneKey, x - Utils.getTextWidth(g, laneKey) / 2, y + 5);
     }
 
     public void update() {
@@ -58,11 +62,21 @@ public class Target {
         animateMissTime = 5;
     }
 
-    public void triggerHold() {
-        isHeld = true;
-    }
+//    public void triggerHold() {
+//        isHeld = true;
+//    }
 
-    public void triggerRelease() {
-        isHeld = false;
+//    public void triggerRelease() {
+//        isHeld = false;
+//    }
+
+    private String getLaneKey() {
+        return switch (lane) {
+            case 0 -> "D";
+            case 1 -> "F";
+            case 2 -> "J";
+            case 3 -> "K";
+            default -> throw new IllegalStateException("Unexpected value: " + lane);
+        };
     }
 }

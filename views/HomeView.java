@@ -4,6 +4,7 @@ import components.buttons.Button;
 import components.buttons.CircularButton;
 import components.buttons.PolygonButton;
 import data.*;
+import lib.SaveManager;
 import lib.StateManager;
 import listeners.ButtonListener;
 import utils.Utils;
@@ -18,15 +19,18 @@ public class HomeView extends View {
     private final ArrayList<SongMetadata> songs = new ArrayList<>();
     private final HashMap<String, String> songFileMap = new HashMap<>();
     private final HashMap<Difficulty, Color> difficultyColors = new HashMap<>() {{
-        put(Difficulty.Easy, Color.decode("#6FFFA0"));
+        put(Difficulty.Easy, Color.decode("#56C45F"));
         put(Difficulty.Medium, Color.decode("#FFB86F"));
         put(Difficulty.Hard, Color.decode("#FF6F6F"));
     }};
+    private final SaveManager saveManager;
+
     private SongMetadata currentSong;
 
     public HomeView(Game game, StateManager stateManager) {
         super(game, stateManager);
         setLayout(new BorderLayout());
+        saveManager = new SaveManager();
 
         for (String song : Songs.getAllSongFiles()) {
             SongMetadata s = SongFileProcessor.getMetadata("songs/" + song);
@@ -42,7 +46,12 @@ public class HomeView extends View {
         });
         bookmarkButton = new CircularButton(460, 300, 60, 60, Color.decode("#A07ECE"),
                 Color.decode("#D1C0E6"), () -> {
-
+            if (saveManager.isBookmarked(currentSong.name())) {
+                saveManager.unbookmarkSong(currentSong.name());
+            } else {
+                saveManager.bookmarkSong(currentSong.name());
+            }
+            repaint();
         });
 
         previousButton = new PolygonButton(
@@ -94,7 +103,14 @@ public class HomeView extends View {
         // bookmark button
         bookmarkButton.draw(g);
         g.setColor(Color.BLACK);
-        g.fillPolygon(new int[]{482, 482, 498, 498, 490}, new int[]{340, 319, 319, 340, 336}, 5);
+        if (saveManager.isBookmarked(currentSong.name())) {
+            g.fillPolygon(new int[]{482, 482, 498, 498, 490}, new int[]{340, 319, 319, 340, 336}, 5);
+        } else {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setStroke(new BasicStroke(2));
+            g2.drawPolygon(new int[]{482, 482, 498, 498, 490}, new int[]{340, 319, 319, 340, 336}, 5);
+        }
+
 
         previousButton.draw(g);
         nextButton.draw(g);
@@ -108,8 +124,9 @@ public class HomeView extends View {
         g.setColor(difficultyColors.get(currentSong.difficulty()));
         g.fillRoundRect(109, 263, 82, 22, 10, 10);
         g.setColor(Color.WHITE);
-        g.drawString(currentSong.difficulty().toString(), 109 + (82 - Utils.getTextLength(g, currentSong.difficulty().toString())) / 2, 280);
+        g.drawString(currentSong.difficulty().toString(), 109 + (82 - Utils.getTextWidth(g, currentSong.difficulty().toString())) / 2, 280);
 
         g.drawString("BPM: " + currentSong.bpm(), 110, 310);
+        g.drawString("Duration: " + Utils.formatTime(currentSong.duration()), 110, 330);
     }
 }

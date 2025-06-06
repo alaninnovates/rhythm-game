@@ -24,7 +24,7 @@ public class DisappearingText {
         if (disappearTime > 0) {
             g.setFont(new Font("Open Sans", Font.PLAIN, 20));
             g.setColor(Color.WHITE);
-            g.drawString(text, x - Utils.getTextLength(g, text) / 2, y);
+            g.drawString(text, x - Utils.getTextWidth(g, text) / 2, y);
             disappearTime--;
         }
     }

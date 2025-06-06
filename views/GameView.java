@@ -6,12 +6,16 @@ import data.NoteData;
 import data.Song;
 import data.SongFileProcessor;
 import lib.AssetImage;
+import lib.MediaLoader;
 import lib.StateManager;
 import listeners.KeyboardListener;
 import utils.Updater;
+import utils.Utils;
 
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GameView extends View {
     private final Song song;
@@ -30,14 +34,19 @@ public class GameView extends View {
             new Target(3, noteLines[3].computeNotePosition(targetPercent).x(), noteLines[3].computeNotePosition(targetPercent).y())
     };
     private final AssetImage backgroundImage = new AssetImage("assets/synthwave.png");
+    private final AssetImage partyPopper = new AssetImage("assets/party-popper.png");
     private final long startMs;
+    private final Updater updater;
+    private final MediaLoader mediaLoader;
+
     private DisappearingText disappearingText;
     private int percentCompleted = 0;
 
     public GameView(Game game, StateManager stateManager) {
         super(game, stateManager);
         new KeyboardListener(this);
-        new Updater(this);
+        updater = new Updater(this);
+        updater.start();
 
         song = SongFileProcessor.processSong("songs/" + stateManager.getChosenSong());
         notes = new LinkedList<>();
@@ -45,6 +54,30 @@ public class GameView extends View {
             Note note = new Note(data);
             notes.add(note);
         }
+
+        try {
+            mediaLoader = new MediaLoader("songs/audio/" + stateManager.getChosenSong().replace(".song", ".wav"));
+            mediaLoader.play();
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading song audio: " + e.getMessage(), e);
+        }
+
+        // "vacuum" the notes that are already past the target percent
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                for (int i = 0; i < notes.size(); i++) {
+                    Note note = notes.get(i);
+                    double travelPercent = computeTravelPercent(note);
+                    if (travelPercent > 100) {
+                        stateManager.incrementAccuracyCount("Miss", 1);
+                        notes.remove(note);
+                        stateManager.resetCurrentCombo();
+                    }
+                }
+            }
+        }, 0, 100);
+
 
         startMs = System.currentTimeMillis();
     }
@@ -55,7 +88,6 @@ public class GameView extends View {
         requestFocusInWindow();
         g.drawImage(backgroundImage.getImage(), 0, 0, null);
 
-        // g.drawString("Press D, F, J, K to hit the notes", 50, 50);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Open Sans", Font.PLAIN, 15));
         g.drawString(song.metadata().name(), 18, 26);
@@ -87,7 +119,7 @@ public class GameView extends View {
             double travelPercent = computeTravelPercent(note);
             if (travelPercent < 0) continue;
             Coordinate current = noteLines[note.getData().lane()].computeNotePosition(travelPercent);
-            g.fillOval(current.x() - 30, current.y() - 30, 60, 60);
+            g.fillOval(current.x() - 20, current.y() - 20, 40, 40);
         }
 
         if (disappearingText != null) {
@@ -97,10 +129,27 @@ public class GameView extends View {
             }
         }
 
-        percentCompleted = (int) ((1-((double)(song.metadata().duration() - (System.currentTimeMillis() - startMs)) / song.metadata().duration())) * 100);
+//        percentCompleted = (int) ((1 - ((double) (song.metadata().duration() - (System.currentTimeMillis() - startMs)) / song.metadata().duration())) * 100);
+        percentCompleted = 100 - (int) (notes.size() / (double) song.notes().size() * 100);
 
-        if (percentCompleted >= 130) {
-            game.showEndView();
+        if (percentCompleted == 100) {
+            updater.stop();
+            g.setColor(Color.decode("#6823C3"));
+            g.fillRoundRect(89, 165, 371, 257, 12, 12);
+            g.drawImage(partyPopper.getImage(), 313, 222, 128, 128, null);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Open Sans", Font.BOLD, 36));
+            g.drawString("Song Complete!", getWidth() / 2 - Utils.getTextWidth(g, "Song Complete!") / 2, 200);
+            g.setFont(new Font("Open Sans", Font.PLAIN, 20));
+            g.drawString("Congratulations!", 100, 250);
+            g.drawString("Scores are loading up...", 100, 310);
+            repaint();
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    game.showEndView();
+                }
+            }, 1500);
         }
     }
 
@@ -110,24 +159,24 @@ public class GameView extends View {
         for (Note note : notes) {
             if (note.getData().lane() == lane) {
                 double travelPercent = computeTravelPercent(note);
-                System.out.println(travelPercent);
-                if (travelPercent - targetPercent > 30) {
+                if (travelPercent < 0 || travelPercent + 10 < targetPercent || travelPercent > 100) {
+                    continue;
+                }
+                if (travelPercent > targetPercent + 10) {
                     targets[lane].triggerMiss();
                     disappearingText = new DisappearingText("Miss", getWidth() / 2, getHeight() / 2, 20);
                     stateManager.incrementAccuracyCount("Miss", 1);
+                    stateManager.resetCurrentCombo();
                     continue;
                 }
-                if (note.getData().type() == NoteType.HoldNote) {
-                    targets[lane].triggerHold();
-                } else {
-                    targets[lane].triggerSuccess();
-                    notes.remove(note);
-                    String stateText = getAnimateText(Math.abs(travelPercent - targetPercent));
-                    disappearingText = new DisappearingText(stateText + "!", getWidth() / 2, getHeight() / 2, 20);
-                    stateManager.incrementAccuracyCount(stateText, 1);
-                    int score = computeScore(travelPercent);
-                    stateManager.incrementScore(score);
-                }
+                targets[lane].triggerSuccess();
+                notes.remove(note);
+                String stateText = getAnimateText(Math.abs(travelPercent - targetPercent));
+                disappearingText = new DisappearingText(stateText + "!", getWidth() / 2, getHeight() / 2, 20);
+                stateManager.incrementAccuracyCount(stateText, 1);
+                int score = computeScore(travelPercent);
+                stateManager.incrementScore(score);
+                stateManager.incrementCurrentCombo();
                 repaint();
                 return;
             }
@@ -135,11 +184,10 @@ public class GameView extends View {
         repaint();
     }
 
-    public void releaseLane(int lane) {
-        if (lane < 0 || lane >= noteLines.length) return;
-        targets[lane].triggerRelease();
-        repaint();
-    }
+//    public void releaseLane(int lane) {
+//        if (lane < 0 || lane >= noteLines.length) return;
+//        repaint();
+//    }
 
     private double computeTravelPercent(Note note) {
         long elapsed = System.currentTimeMillis() - startMs;
@@ -156,9 +204,9 @@ public class GameView extends View {
     }
 
     private String getAnimateText(double dist) {
-        if (dist < 10) return "Perfect";
-        if (dist < 20) return "Great";
-        if (dist < 30) return "Good";
+        if (dist < 3) return "Perfect";
+        if (dist < 5) return "Great";
+        if (dist < 10) return "Good";
         return "Okay";
     }
 }

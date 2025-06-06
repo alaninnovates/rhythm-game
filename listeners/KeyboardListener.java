@@ -42,22 +42,22 @@ public class KeyboardListener implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        int keyCode = e.getKeyCode();
-        switch (keyCode) {
-            case KeyEvent.VK_D:
-                gameView.releaseLane(0);
-                break;
-            case KeyEvent.VK_F:
-                gameView.releaseLane(1);
-                break;
-            case KeyEvent.VK_J:
-                gameView.releaseLane(2);
-                break;
-            case KeyEvent.VK_K:
-                gameView.releaseLane(3);
-                break;
-            default:
-                break;
-        }
+//        int keyCode = e.getKeyCode();
+//        switch (keyCode) {
+//            case KeyEvent.VK_D:
+//                gameView.releaseLane(0);
+//                break;
+//            case KeyEvent.VK_F:
+//                gameView.releaseLane(1);
+//                break;
+//            case KeyEvent.VK_J:
+//                gameView.releaseLane(2);
+//                break;
+//            case KeyEvent.VK_K:
+//                gameView.releaseLane(3);
+//                break;
+//            default:
+//                break;
+//        }
     }
 }

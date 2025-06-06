@@ -1,25 +1,22 @@
 package utils;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
-public class Updater implements Runnable {
-    private final JPanel panel;
+public class Updater {
+    private final Timer timer;
 
     public Updater(JPanel panel) {
-        this.panel = panel;
-        Thread repainter = new Thread(this, "RepainterThread");
-        repainter.start();
+        timer = new Timer((int) Constants.FRAME_TIME_MS, e -> {
+            panel.repaint();
+            panel.revalidate();
+        });
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            panel.repaint();
-            try {
-                Thread.sleep(1000 / Constants.FPS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    public void start() {
+        timer.start();
+    }
+
+    public void stop() {
+        timer.stop();
     }
 }

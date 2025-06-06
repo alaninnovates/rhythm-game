@@ -37,7 +37,7 @@ public class EndView extends View {
         g.fillRoundRect(59, 89, 431, 422, 12, 12);
         g.setColor(Color.WHITE);
         g.setFont(new Font("Open Sans", Font.BOLD, 36));
-        g.drawString("Song Complete!", getWidth() / 2 - Utils.getTextLength(g, "Song Complete!") / 2, 150);
+        g.drawString("Song Complete!", getWidth() / 2 - Utils.getTextWidth(g, "Song Complete!") / 2, 150);
         g.setFont(new Font("Open Sans", Font.PLAIN, 20));
         homeButton.draw(g);
         playAgainButton.draw(g);
@@ -63,13 +63,13 @@ public class EndView extends View {
         int centerAxis = (int) (59 + space * 0.5) + 20;
         int gap = 10;
         g.setColor(Color.decode("#3CEBFF"));
-        g.drawString("Perfect", centerAxis - Utils.getTextLength(g, "Perfect") - gap / 2, 270);
+        g.drawString("Perfect", centerAxis - Utils.getTextWidth(g, "Perfect") - gap / 2, 270);
         g.setColor(Color.decode("#3CFF4C"));
-        g.drawString("Great", centerAxis - Utils.getTextLength(g, "Great") - gap / 2, 300);
+        g.drawString("Great", centerAxis - Utils.getTextWidth(g, "Great") - gap / 2, 300);
         g.setColor(Color.decode("#FFE987"));
-        g.drawString("Okay", centerAxis - Utils.getTextLength(g, "Okay") - gap / 2, 330);
+        g.drawString("Okay", centerAxis - Utils.getTextWidth(g, "Okay") - gap / 2, 330);
         g.setColor(Color.decode("#FF6D6D"));
-        g.drawString("Miss", centerAxis - Utils.getTextLength(g, "Miss") - gap / 2, 360);
+        g.drawString("Miss", centerAxis - Utils.getTextWidth(g, "Miss") - gap / 2, 360);
 
         g.setColor(Color.WHITE);
         g.drawString(String.valueOf(stateManager.getAccuracyCount("Perfect")), centerAxis + gap / 2, 270);
